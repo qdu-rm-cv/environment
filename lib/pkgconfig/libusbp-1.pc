@@ -1,0 +1,10 @@
+prefix=/home/eric/CV_ENV
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: libusbp
+Version: 1.2.0
+Description: Library for accessing USB devices.
+Requires: 
+Libs: -L${libdir} -lusbp-1 
+Cflags: -I${includedir}/libusbp-1 
