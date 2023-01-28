@@ -1,17 +1,51 @@
-#!/bin/zsh
+#!/bin/bash
+
+workdir=$(cd $(dirname $0)/..; pwd)
+
+command_update(){
+    sudo apt update && sudo apt upgrade
+}
+
+command_install(){
+    sudo dpkg -i ./pack/MVS-2.1.2_x86_64_20221208.deb
+    echo "-- MVS deb has already to date.\n"
+}
+
 
 echo "\n##############################"
 echo "#  Installing dependancy."
 echo "##############################\n"
 
-sudo apt install -y gcc g++ cmake git curl wget build-essential ninja-build \
-    libzmq3-dev libboost-dev libudev-dev libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev \
-    libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev \
-    libpng-dev libtiff-dev libdc1394-22-dev ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
+command_update
 
+# base
+echo "Installing base dependancy"
+sudo apt-get install -y gcc g++ cmake git curl wget build-essential ninja-build python-is-python3
+
+# oneTBB
+echo "Installing [oneTBB] dependancy"
+sudo apt-get install -y libtbb-dev
+
+# BehaviourTree.CPP
+echo "Installing [BehaviourTree.CPP] dependancy"
+sudo apt-get install -y libzmq3-dev libboost-dev
+
+# OpenCV
+echo "Installing [OpenCV] dependancy"
+sudo apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev  ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
+
+# libusbp
+echo "Installing [libusbp] dependancy"
+sudo apt-get install -y libudev-dev
+
+# Ceres Solver
+echo "Installing [Ceres Solver] dependancy"
+sudo apt-get install -y libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev
+
+command_update
 
 echo "\n##############################"
-echo "#  Link files."
+echo "#  Linking files."
 echo "##############################\n"
 
 if [ ! -f ~/.cv_profile ]; then
@@ -23,9 +57,12 @@ else
     echo "-- has touched ~/.cv_profile\n"
 fi
 
-sudo ln -s $PWD/include/** /usr/local/include
-echo export PATH=$PWD:${PATH} >> ~/.cv_profile
-echo export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH >> ~/.cv_profile
+sudo ln -s $workdir/include/** /usr/local/include
+sudo ln -s $workdir/lib/** /usr/local/lib
+sudo ln -s $workdir/bin/** /usr/local/bin
+
+echo export PATH=$workdir:${PATH} >> ~/.cv_profile
+echo export LD_LIBRARY_PATH=$workdir:$LD_LIBRARY_PATH >> ~/.cv_profile
 sudo ldconfig
 
 source ~/.cv_profile
@@ -34,13 +71,13 @@ echo "\n##############################"
 echo "#  Installing packages."
 echo "##############################\n"
 
-pack_info=$(dpkg -l | grep mvs)
-pack_install=$pack_info | grep '2022-10-24'
-if ! [ $pack_install  -eq ""]; then
-    sudo dpkg -i ./pack/MVS-2.1.2_x86_64_20221208.deb
-    echo "-- MVS deb is not installed.\n"
-else
-    echo "-- MVS deb has been installed.\n"
+if ! [ `dpkg -l | grep mvs | grep 2022-10-24 | wc -l` -ne 0 ]; then
+    if [ `dpkg -l | grep mvs | wc -l` -ne 0 ]; then
+        echo "-- MVS deb should update.\n"
+    else
+        echo -e "-- MVS deb is not installed.\n"
+    fi
+    command_install
 fi
 
 echo "##############################"
