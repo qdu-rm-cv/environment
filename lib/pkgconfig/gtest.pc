@@ -1,9 +1,9 @@
-libdir=/home/eric/CV_ENV/lib
-includedir=/home/eric/CV_ENV/include
+libdir=/home/eric/env/environment/lib
+includedir=/home/eric/env/environment/include
 
 Name: gtest
 Description: GoogleTest (without main() function)
-Version: 1.11.0
+Version: 1.12.1
 URL: https://github.com/google/googletest
-Libs: -L${libdir} -lgtest 
+Libs: -L${libdir} -lgtest -lpthread
 Cflags: -I${includedir} -DGTEST_HAS_PTHREAD=1
