@@ -4,21 +4,43 @@
 
 [QDU-RM-AI](https://github.com/qdu-rm-cv/qdu-rm-ai) Environment in `Ubuntu20.04 LTS`, which is used to `CI/CD`, *without CUDA*.
 
-- **Haven't tested in PC or MiniPC**
+- Untested:
+  - *PC*
+  - *Mini PC*
+- Passed:
+  - *WSL2*
+
+## How to use
+
+```sh
+git clone https://github.com/qdu-rm-cv/environment.git
+cd environment
+sudo chmod 777 ./shell/*
+./shell/env_dep_install.sh
+
+# if you are a member of qdu-rm(weilai), you should run next command,
+# which is used to install some coding and formatting tools.
+
+# ./shell/code_dep_install.sh
+```
 
 ## Packages version
 
-- [OpenCV (4.5.4)](https://docs.opencv.org/4.5.4/d7/d9f/tutorial_linux_install.html)
-- [BehavoirTree.CPP (3.8.1)](https://github.com/BehaviorTree/BehaviorTree.CPP)
-- [MVS SDK from HIKROBOT (MVS-2.1.2_x86_64_20221208)](https://www.hikrobotics.com/cn/machinevision/service/download?module=0)
-- [spdlog (1.11.0)](https://github.com/gabime/spdlog)
-- [Google Test (1.10.0)](https://github.com/google/googletest)
-- [oneTBB (2020.1)](https://github.com/oneapi-src/oneTBB) or `libtbb-dev`
-- [libusbp (1.2.0)](https://github.com/pololu/libusbp)
-- [Eigen (3.3.7)](https://eigen.tuxfamily.org/index.php?title=Main_Page)
-- [Ceres-Solver (2.1.0)](http://ceres-solver.org/)
+| Package name                                                                                    | Version                   |
+| :---------------------------------------------------------------------------------------------- | :------------------------ |
+| [OpenCV](https://docs.opencv.org/4.5.4/d7/d9f/tutorial_linux_install.html)                      | 4.5.4                     |
+| [BehavoirTree.CPP](https://github.com/BehaviorTree/BehaviorTree.CPP)                            | 3.8.1                     |
+| [Spdlog](https://github.com/gabime/spdlog)                                                      | 1.11.0                    |
+| [Google Test](https://github.com/google/googletest)                                             | 1.10.0                    |
+| [oneTBB](https://github.com/oneapi-src/oneTBB) or `libtbb-dev`                                  | 2020.1                    |
+| [libusbp](https://github.com/pololu/libusbp)                                                    | 1.2.0                     |
+| [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) or `libeigen3-dev`               | 3.37                      |
+| [Ceres-Solver](http://ceres-solver.org/)                                                        | 2.1.0                     |
+| [MVS SDK from HIKROBOT](https://www.hikrobotics.com/cn/machinevision/service/download?module=0) | MVS-2.1.2_x86_64_20221208 |
 
 ## Build dependancy
+
+> ***Wrote in `./shell/env_dep_install.sh`***
 
 ```sh
 # base
@@ -42,4 +64,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.1.0* : 2023.1.27
+*0.1.1* : 2023.1.28
+
+> Read `Release.txt` for more details.
