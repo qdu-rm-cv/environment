@@ -50,7 +50,7 @@ sudo apt-get install gcc g++ cmake git curl wget build-essential ninja-build
 sudo apt-get install libtbb-dev
 
 # BehaviourTree.CPP
-sudo apt-get install libzmq3-dev libboost-dev
+sudo apt-get install libzmq3-dev libboost-dev libncurses-dev
 
 # OpenCV
 sudo apt-get install libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev  ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
@@ -64,6 +64,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.1.1* : 2023.1.28
+*0.1.2* : 2023.1.29
 
 > Read `Release.txt` for more details.
