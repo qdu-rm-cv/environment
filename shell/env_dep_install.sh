@@ -3,8 +3,8 @@
 workdir=$(cd $(dirname $0)/..; pwd)
 
 command_update(){
-    sudo apt update && sudo apt upgrade
-    echo -e "\n-- apt update \n"
+    sudo apt update && sudo apt upgrade -y
+    echo -e "\n-- apt update"
 }
 
 command_install(){

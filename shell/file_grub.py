@@ -12,5 +12,5 @@ for p in paths:
     des_path = os.path.join(DET_DIR, p)
     print(f"-- Refreshing {des_path}")
     for filename in os.listdir(cur_path):
-        os.system(f"sudo rm {des_path}/{filename}")
+        os.system(f"sudo rm -rf {des_path}/{filename}")
         os.system(f"sudo ln -s {cur_path}/{filename} {des_path}")
