@@ -1,4 +1,25 @@
 ###########################################
+# 0.1.3
+###########################################
+
+UPDATE SCRIPTS
+UPDATE LIB DOWNGRADE [Google Test] ORDERED BY [BehavoirTree.CPP]
+
+
+PACKAGE VERS:
+
+OpenCV (4.5.4)
+BehavoirTree.CPP (3.8.1)
+MVS SDK from HIKROBOT (MVS-2.1.2_x86_64_20221208)
+spdlog (1.11.0)
+[UPDATE]Google Test (1.12.1) -> Google Test (1.10.0)
+oneTBB (2020.1) or libtbb-dev
+libusbp (1.2.0)
+Eigen (3.3.7)
+Ceres-Solver (2.1.0)
+
+
+###########################################
 # 0.1.2
 ###########################################
 

@@ -31,10 +31,10 @@ sudo chmod 777 ./shell/*
 | [OpenCV](https://docs.opencv.org/4.5.4/d7/d9f/tutorial_linux_install.html)                      | 4.5.4                     |
 | [BehavoirTree.CPP](https://github.com/BehaviorTree/BehaviorTree.CPP)                            | 3.8.1                     |
 | [Spdlog](https://github.com/gabime/spdlog)                                                      | 1.11.0                    |
-| [Google Test](https://github.com/google/googletest)                                             | 1.12.1                    |
+| [Google Test](https://github.com/google/googletest)                                             | 1.10.0                    |
 | [oneTBB](https://github.com/oneapi-src/oneTBB) or `libtbb-dev`                                  | 2020.1                    |
 | [libusbp](https://github.com/pololu/libusbp)                                                    | 1.2.0                     |
-| [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) or `libeigen3-dev`               | 3.3.7                      |
+| [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) or `libeigen3-dev`               | 3.3.7                     |
 | [Ceres-Solver](http://ceres-solver.org/)                                                        | 2.1.0                     |
 | [MVS SDK from HIKROBOT](https://www.hikrobotics.com/cn/machinevision/service/download?module=0) | MVS-2.1.2_x86_64_20221208 |
 
@@ -64,6 +64,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.1.2* : 2023.2.3
+*0.1.3* : 2023.2.3
 
 > Read `Release.txt` for more details.
