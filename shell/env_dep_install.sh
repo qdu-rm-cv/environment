@@ -1,6 +1,6 @@
 #!/bin/bash
 
-workdir=$(cd $(dirname $0)/..; pwd)
+root_dir=$(cd "$(dirname "$0")/..";pwd)
 
 command_update(){
     sudo apt update && sudo apt upgrade -y
@@ -8,7 +8,7 @@ command_update(){
 }
 
 command_install(){
-    sudo dpkg -i ./pack/MVS-2.1.2_x86_64_20221208.deb
+    sudo dpkg -i $root_dir/pack/MVS-2.1.2_x86_64_20221208.deb
     echo -e "-- MVS deb has already to date.\n"
 }
 
@@ -58,10 +58,10 @@ else
     echo -e "-- has touched ~/.cv_profile\n"
 fi
 
-python3 $workdir/shell/file_grub.py
+python3 $root_dir/shell/file_grub.py
 
-echo -e export PATH=$workdir:${PATH} >> ~/.cv_profile
-echo -e export LD_LIBRARY_PATH=$workdir:$LD_LIBRARY_PATH >> ~/.cv_profile
+echo -e export PATH=$root_dir:${PATH} >> ~/.cv_profile
+echo -e export LD_LIBRARY_PATH=$root_dir:$LD_LIBRARY_PATH >> ~/.cv_profile
 sudo ldconfig
 
 source ~/.cv_profile

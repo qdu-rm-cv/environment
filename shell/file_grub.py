@@ -1,4 +1,6 @@
-#! /usr/bin/python
+# -*- coding:utf-8 -*-
+# ! /usr/bin/python3
+
 import os
 
 DET_DIR = "/usr/local"
