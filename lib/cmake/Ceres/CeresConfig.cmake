@@ -114,7 +114,7 @@ function(ceres_pretty_print_cmake_list OUTPUT_VAR)
 endfunction()
 
 # The list of (optional) components this version of Ceres was compiled with.
-set(CERES_COMPILED_COMPONENTS "EigenSparse;SparseLinearAlgebraLibrary;SchurSpecializations;Multithreading")
+set(CERES_COMPILED_COMPONENTS "EigenSparse;SparseLinearAlgebraLibrary;LAPACK;SuiteSparse;CXSparse;SchurSpecializations;Multithreading")
 
 # If Ceres was not installed, then by definition it was exported
 # from a build directory.
@@ -179,8 +179,8 @@ include(CMakeFindDependencyMacro)
 find_dependency(Threads)
 
 # Optional dependencies
-
-
+find_dependency(CXSparse 3.2.0)
+find_dependency(SuiteSparse 5.7.1)
 
 # As imported CMake targets are not re-exported when a dependent target is
 # exported, we must invoke find_package(XXX) here to reload the definition
@@ -223,8 +223,8 @@ set(CERES_USES_MINIGLOG OFF)
 set(CERES_GLOG_VERSION )
 set(CERES_GLOG_WAS_BUILT_WITH_CMAKE 0)
 
-set(CERES_USES_GFLAGS OFF)
-set(CERES_GFLAGS_VERSION )
+set(CERES_USES_GFLAGS ON)
+set(CERES_GFLAGS_VERSION 2.2.2)
 
 if (CERES_USES_MINIGLOG)
   # Output message at standard log level (not the lower STATUS) so that

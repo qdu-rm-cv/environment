@@ -1,4 +1,4 @@
-prefix=/home/eric/CV_ENV
+prefix=/usr/local
 exec_prefix=${prefix}
 includedir=${prefix}/include
 libdir=${exec_prefix}/lib
