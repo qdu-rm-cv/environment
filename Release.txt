@@ -1,4 +1,16 @@
 ###########################################
+# 0.3.0
+###########################################
+
+UPDATE SCRIPTS
+
+Format shell scripts.
+Add a new shell script [menu.sh], which uses whiptail command.
+
+Seperate the package files by theirselves' relationship.
+
+
+###########################################
 # 0.2.0
 ###########################################
 

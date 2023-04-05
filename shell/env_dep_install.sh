@@ -1,17 +1,19 @@
 #!/bin/bash
 
-root_dir=$(cd "$(dirname "$0")/..";pwd)
+root_dir=$(
+  cd "$(dirname "$0")/.."
+  pwd
+)
 
-command_update(){
-    sudo apt update && sudo apt upgrade -y
-    echo -e "\n-- apt update"
+command_update() {
+  sudo apt update && sudo apt upgrade -y
+  echo -e "\n-- apt update"
 }
 
-command_install(){
-    sudo dpkg -i $root_dir/pack/MVS-2.1.2_x86_64_20221208.deb
-    echo -e "-- MVS deb has already to date.\n"
+command_install() {
+  sudo dpkg -i $root_dir/pack/MVS-2.1.2_x86_64_20221208.deb
+  echo -e "-- MVS deb has already to date.\n"
 }
-
 
 echo -e "\n##############################"
 echo -e "#  Installing dependancy."
@@ -33,7 +35,7 @@ sudo apt-get install -y libzmq3-dev libboost-dev libncurses-dev
 
 # OpenCV
 echo -e "\n-- Installing [OpenCV] dependancy\n"
-sudo apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev  ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
+sudo apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
 
 # libusbp
 echo -e "\n-- Installing [libusbp] dependancy\n"
@@ -50,12 +52,12 @@ echo -e "#  Linking files."
 echo -e "##############################\n"
 
 if [ ! -f ~/.cv_profile ]; then
-    touch ~/.cv_profile
-    echo -e "-- touch ~/.cv_profile\n"
+  touch ~/.cv_profile
+  echo -e "-- touch ~/.cv_profile\n"
 else
-    rm ~/.cv_profile
-    touch ~/.cv_profile
-    echo -e "-- has touched ~/.cv_profile\n"
+  rm ~/.cv_profile
+  touch ~/.cv_profile
+  echo -e "-- has touched ~/.cv_profile\n"
 fi
 
 python3 $root_dir/shell/file_grub.py
@@ -70,13 +72,13 @@ echo -e "\n##############################"
 echo -e "#  Installing packages."
 echo -e "##############################\n"
 
-if ! [ `dpkg -l | grep mvs | grep 2022-10-24 | wc -l` -ne 0 ]; then
-    if [ `dpkg -l | grep mvs | wc -l` -ne 0 ]; then
-        echo -e "-- MVS deb should update.\n"
-    else
-        echo -e "-- MVS deb is not installed.\n"
-    fi
-    command_install
+if ! [ $(dpkg -l | grep mvs | grep 2022-10-24 | wc -l) -ne 0 ]; then
+  if [ $(dpkg -l | grep mvs | wc -l) -ne 0 ]; then
+    echo -e "-- MVS deb should update.\n"
+  else
+    echo -e "-- MVS deb is not installed.\n"
+  fi
+  command_install
 fi
 
 echo -e "##############################"

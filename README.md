@@ -16,7 +16,9 @@
 git clone https://github.com/qdu-rm-cv/environment.git
 cd environment
 sudo chmod 777 ./shell/*
-./shell/env_dep_install.sh
+./shell/env_dep_install.sh # without ui
+# or
+./shell/menu.sh # [Recommanded] with ui
 
 # if you are a member of qdu-rm(weilai), you should run next command,
 # which is used to install some coding and formatting tools.
@@ -64,6 +66,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.2.0* : 2023.2.7
+*0.3.0* : 2023.4.5
 
 > Read `Release.txt` for more details.
