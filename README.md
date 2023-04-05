@@ -66,6 +66,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.3.0* : 2023.4.5
+*0.3.1* : 2023.4.5
 
 > Read `Release.txt` for more details.

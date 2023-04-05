@@ -1,5 +1,8 @@
 #! /bin/bash
 
+# ----------------------------------------------------------------
+### Constant Variables
+# ----------------------------------------------------------------
 DET_DIR="/usr/local"
 
 ROOT_DIR=$(
@@ -16,10 +19,19 @@ PKG="/lib/pkgconfig/"
 
 MODE=1 # 0: debug 1: release
 
+# ------------------------------------------------------------------------------------------------
+### Package options
+#              notice:  modify code below if package changes
+#
+#     each lib format:  directory
+#                       functions
+# ------------------------------------------------------------------------------------------------
+
 # oneTBB
 oneTBB_dirs=("/lib/oneTBB/")
 function oneTBB_dep() {
   echo -e "\n-- Installing [oneTBB] dependancy\n"
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libtbb-dev
   fi
@@ -29,6 +41,7 @@ function oneTBB_dep() {
 BehaviourTree_dirs=("/bin/behaviortree_cpp_v3/" "/include/behaviortree_cpp_v3/" "/lib/behaviortree_cpp_v3/" "/lib/cmake/behaviortree_cpp_v3/")
 function BehaviourTree_dep() {
   echo -e "\n-- Installing [BehaviorTree] dependancy\n"
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libzmq3-dev libboost-dev libncurses-dev
   fi
@@ -38,6 +51,7 @@ function BehaviourTree_dep() {
 OpenCV_dirs=("/bin/opencv4/" "/include/opencv4/" "/lib/opencv4/" "/lib/cmake/opencv4/" "/share/licenses/opencv4/" "/share/opencv4/")
 function OpenCV_dep() {
   echo -e "\n-- Installing [OpenCV] dependancy\n"
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
   fi
@@ -47,6 +61,7 @@ function OpenCV_dep() {
 libusbp_dirs=("/include/libusbp-1/" "/lib/libusbp-1/" "/lib/pkgconfig/libusbp-1/")
 function libusbp_dep() {
   echo -e "\n-- Installing [libusbp] dependancy\n"
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libudev-dev
   fi
@@ -56,10 +71,20 @@ function libusbp_dep() {
 Ceres_dirs=("/include/ceres/" "/lib/ceres/" "/lib/cmake/Ceres/")
 function Ceres_dep() {
   echo -e "\n-- Installing [Ceres Solver] dependancy\n"
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev
   fi
 }
+
+# function name:  file_fix
+#         param:  None
+#        return:  None
+#
+#          note:  This function is used to correct libeigen3-dev version in '../lib/cmake/Ceres/CeresConfig.cmake'
+#                 There is a conflict between ROS-CERES and CERES, so correct it with [SED] command
+#         usage:  file_fix
+#
 function file_fix() {
   var="$(dpkg -l | grep eigen | awk '{print $3}')"
   sed -i "194c set(CERES_EIGEN_VERSION ${var%-*})" ${ROOT_DIR}/lib/cmake/Ceres/CeresConfig.cmake
@@ -79,17 +104,31 @@ function GoogleTest_dep() {
 
 # MVS
 function MVS_install() {
+  # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo dpkg -i $ROOT_DIR/pack/MVS-2.1.2_x86_64_20221208.deb
   fi
   echo -e "\n-- Installed MVS\n"
 }
 
+# ------------------------------------------------------------------------------------------------
+### Functions
+# ------------------------------------------------------------------------------------------------
+
+# function name:  link_lib
+#         param:  $1     The text which is used to show [the stage]
+#                 $2     The array includes directory the lib which should be processed
+#        return:  None
+#
+#          note:  This function is used to link(remove then link) the specified library you given.
+#         usage:  link_lib "oneTBB" "${oneTBB_dirs[*]}"
+#
 function link_lib() {
-  echo -e "-- Linking [$1] files"
-  target_dir=$2
+  echo -e "-- Linking [$1] files" # [param-$1] first appears
+  target_dir=$2                   # [param-$2] first appears
 
   for file_dir in ${target_dir[@]}; do
+    # 1. To get which type => var:choice
     if [[ $file_dir =~ $CMAKE ]]; then
       choice=$CMAKE
     elif [[ $file_dir =~ $PKG ]]; then
@@ -106,17 +145,22 @@ function link_lib() {
       continue
     fi
 
+    # 2. Link files.
     echo -e "\n-- Linking [$1] $choice dir files\n"
+
+    # 2.1 Type a) INCLUDE / CMAKE
     if [[ $choice == $INCLUDE || $choice == $CMAKE ]]; then
       cur_file=${ROOT_DIR}${file_dir}
       dest_file=${DET_DIR}${choice}
       del_dir=${DET_DIR}${file_dir}
       echo "RUN: sudo rm -rf ${del_dir:0:${#del_dir}-1} && sudo ln -s ${cur_file:0:${#cur_file}-1} ${dest_file} "
 
+      # COMMAND OCCURS IN [RELEASE MODE]
       if [ "$MODE" == 1 ]; then
         sudo rm -rf ${del_dir:0:${#del_dir}-1} && sudo ln -s ${cur_file:0:${#cur_file}-1} ${dest_file}
       fi
 
+    # 2.2 Type b) others
     else
       for file in $(ls ${ROOT_DIR}${file_dir}); do
         cur_file=${ROOT_DIR}${file_dir}${file}
@@ -124,6 +168,7 @@ function link_lib() {
         dest_file=${DET_DIR}${choice}${file}
         echo "RUN: sudo rm -rf ${del_dir} && sudo ln -s ${cur_file} ${dest_file} "
 
+        # COMMAND OCCURS IN [RELEASE MODE]
         if [ "$MODE" == 1 ]; then
           sudo rm -rf ${del_dir} && sudo ln -s ${cur_file} ${dest_file}
         fi
@@ -131,9 +176,15 @@ function link_lib() {
     fi
   done
   echo -e "\n-- Link [$1] files done\n"
-
 }
 
+# function name:  menu
+#         param:  $1     The chosen options
+#        return:  None
+#
+#          note:  This function is a decorating function, used to call 'link_lib' function
+#         usage:  menu oneTBB
+#
 function menu() {
   echo -e "\n-- Menu $1"
   case "$1" in
@@ -168,7 +219,12 @@ function menu() {
   esac
 }
 
+# ---------------------------------------------------------------------------------------------------
+### Main script
+# ---------------------------------------------------------------------------------------------------
 if (whiptail --title "QDU-RM-CV-ENV installation" --yes-button "With ROS" --no-button "Without ROS" --yesno "Whether you need ROS" 10 60); then
+  # TODO(CV-GROUP): To be continue ...
+  # Nowadays I think it's hard to be completed and apply.
   whiptail --title "QDU-RM-CV-ENV installation" --msgbox " Not supported now.\n Choose Ok to continue." 10 60
 else
   packages=$(
@@ -184,7 +240,10 @@ else
       "MVS" "2.1.2_x86_64_20221208" ON 3>&1 1>&2 2>&3
   )
   exitstatus=$?
+  # Yes Button
   if [ $exitstatus = 0 ]; then
+
+    # 1. Install MVS
     if [[ "${packages[@]}" =~ "MVS" ]]; then
       echo -e "\n##############################"
       echo -e "#  Installing packages."
@@ -201,19 +260,23 @@ else
       echo -e "-- MVS deb has already to date.\n"
     fi
 
+    # 2. Install packages
     echo -e "\n##############################"
     echo -e "#  Linking packages."
     echo -e "##############################"
+    # 2.1 Update APT
     echo -e "\n-- apt update"
     if [ "$MODE" == 1 ]; then
       sudo apt update && sudo apt upgrade -y
     fi
 
+    # 2.2 Install essential apps
     echo -e "\n-- Installing base dependancy\n"
     if [ "$MODE" == 1 ]; then
       sudo apt-get install -y gcc g++ cmake git curl wget build-essential ninja-build python-is-python3
     fi
 
+    # 2.3 New directories '/usr/local/lib/pkgconfig' and '/usr/local/lib/cmake'
     if [ ! -d ${DET_DIR}${PKG} ]; then
       sudo mkdir ${DET_DIR}${PKG}
     fi
@@ -221,6 +284,7 @@ else
       sudo mkdir ${DET_DIR}${CMAKE}
     fi
 
+    # 2.4 Call functions above
     if [[ "${packages[@]}" =~ "All" ]]; then
       menu oneTBB
       menu BehaviorTree
@@ -238,8 +302,11 @@ else
         menu ${package}
       done
     fi
+
+    # 3. ldconfig
     sudo ldconfig
 
+  # No Button
   else
     echo "You chose Cancel."
   fi
