@@ -6,6 +6,6 @@ CUR_PATH=$(
 )
 
 source $CUR_PATH/functions.sh
-packs="All MVS"
+packs=$(menu)
 install "${packs[*]}"
 exit 0
