@@ -4,6 +4,15 @@
 
 UPDATE SCRIPTS
 
+Add some new functions.
+
+
+###########################################
+# 0.4.0
+###########################################
+
+UPDATE SCRIPTS
+
 Rename menu.sh -> functions.sh
 Rewrite functions.sh, env_dep_install.sh and env_menu_install.sh.
 Remove unused file.

@@ -133,6 +133,48 @@ function MVS_install() {
 ### Functions
 # ------------------------------------------------------------------------------------------------
 
+#   function name:  update_file
+#           param:  $1     The update file
+#          return:  None
+#
+#            note:  This function is used instead of REMOVE function.
+#           usage:  update_file "/usr/local/lib/*"
+#           wrote:  Eric Liu
+#  last edit time:  2023/4/7
+#
+function update_file() {
+  DST=$1
+  echo -e "RUN: sudo rm -rf ${DST}"
+  # COMMAND OCCURS IN [RELEASE MODE]
+  if [ "$MODE" == 1 ]; then
+    if [[ -e "${DST}" ]]; then
+      if [[ -e "${DST}.old" ]]; then
+        sudo rm -rf ${DST}.old
+      fi
+      sudo mv ${DST} ${DST}.old
+    fi
+  fi
+}
+#   function name:  link_file
+#           param:  $1     The source file
+#                   $2     The destination file
+#          return:  None
+#
+#            note:  This function is used instead of 'ls -n' command.
+#           usage:  link_file a b
+#           wrote:  Eric Liu
+#  last edit time:  2023/4/7
+#
+function link_file() {
+  SRC=$1
+  DST=$2
+  echo "RUN: sudo ln -s ${SRC} ${DST}"
+  # COMMAND OCCURS IN [RELEASE MODE]
+  if [ "$MODE" == 1 ]; then
+    sudo ln -s ${SRC} ${DST}
+  fi
+}
+
 #   function name:  link_lib
 #           param:  $1     The text which is used to show [the stage]
 #                   $2     The array includes directory the lib which should be processed
@@ -173,12 +215,8 @@ function link_lib() {
       cur_file=${ROOT_DIR}${file_dir}
       dest_file=${DET_DIR}${choice}
       del_dir=${DET_DIR}${file_dir}
-      echo "RUN: sudo rm -rf ${del_dir:0:${#del_dir}-1} && sudo ln -s ${cur_file:0:${#cur_file}-1} ${dest_file} "
-
-      # COMMAND OCCURS IN [RELEASE MODE]
-      if [ "$MODE" == 1 ]; then
-        sudo rm -rf ${del_dir:0:${#del_dir}-1} && sudo ln -s ${cur_file:0:${#cur_file}-1} ${dest_file}
-      fi
+      update_file ${del_dir:0:${#del_dir}-1}
+      link_file ${cur_file:0:${#cur_file}-1} ${dest_file}
 
     # 2.2 Type b) others
     else
@@ -186,12 +224,8 @@ function link_lib() {
         cur_file=${ROOT_DIR}${file_dir}${file}
         del_dir=${DET_DIR}${choice}${file}
         dest_file=${DET_DIR}${choice}${file}
-        echo "RUN: sudo rm -rf ${del_dir} && sudo ln -s ${cur_file} ${dest_file} "
-
-        # COMMAND OCCURS IN [RELEASE MODE]
-        if [ "$MODE" == 1 ]; then
-          sudo rm -rf ${del_dir} && sudo ln -s ${cur_file} ${dest_file}
-        fi
+        update_file ${del_dir}
+        link_file ${cur_file} ${dest_file}
       done
     fi
   done
@@ -339,27 +373,21 @@ function install() {
   # 2.3 Refreshing directories '/usr/local/lib/pkgconfig' and '/usr/local/lib/cmake'
   if [[ $(readlink ${DET_DIR}${PKG}) == ${ROOT_DIR}${PKG} ]]; then
     echo -e "FALSE soft link [$(readlink ${DET_DIR}${PKG})->${ROOT_DIR}${PKG}], so REMOVE it.\n"
-    echo -e "RUN: sudo rm -rf ${DET_DIR}${PKG}"
-    sudo rm -rf ${DET_DIR}${PKG}
-    sleep 2
+    update_file ${DET_DIR}${PKG}
   fi
   if [ ! -d ${DET_DIR}${PKG} ]; then
     echo -e "DON'T HAVE directory ${DET_DIR}${PKG}, so NEW it.\n"
     echo -e "RUN: sudo mkdir ${DET_DIR}${PKG}"
     sudo mkdir ${DET_DIR}${PKG}
-    sleep 2
   fi
   if [[ $(readlink ${DET_DIR}${CMAKE}) == ${ROOT_DIR}${CMAKE} ]]; then
     echo -e "FALSE soft link [$(readlink ${DET_DIR}${CMAKE})->${ROOT_DIR}${CMAKE}], so REMOVE it.\n"
-    echo -e "RUN: sudo rm -rf ${DET_DIR}${CMAKE}"
-    sudo rm -rf ${DET_DIR}${CMAKE}
-    sleep 2
+    update_file ${DET_DIR}${CMAKE}
   fi
   if [ ! -d ${DET_DIR}${CMAKE} ]; then
     echo -e "DON'T HAVE directory ${DET_DIR}${CMAKE}, so NEW it.\n"
     echo -e "RUN: sudo mkdir ${DET_DIR}${CMAKE}"
     sudo mkdir ${DET_DIR}${CMAKE}
-    sleep 2
   fi
 
   # 2.4 Call functions above

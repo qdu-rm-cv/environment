@@ -1,0 +1,4 @@
+{
+    "shellformat.flag": "-i 2 -sr",
+    "editor.formatOnSave": true
+}

@@ -4,9 +4,8 @@
 
 [QDU-RM-AI](https://github.com/qdu-rm-cv/qdu-rm-ai) Environment in `Ubuntu20.04 LTS`, which is used to `CI/CD`, *without CUDA*.
 
-- Untested:
-  - *Mini PC*
 - Passed:
+  - *Mini PC*
   - *PC*
   - *WSL2*
 
@@ -18,7 +17,7 @@ cd environment
 sudo chmod 777 ./shell/*
 ./shell/env_dep_install.sh # without ui
 # or
-./shell/menu.sh # [Recommanded] with ui
+./shell/env_menu_install.sh # [Recommanded] with ui
 
 # if you are a member of qdu-rm(weilai), you should run next command,
 # which is used to install some coding and formatting tools.
@@ -40,9 +39,9 @@ sudo chmod 777 ./shell/*
 | [Ceres-Solver](http://ceres-solver.org/)                                                        | 2.1.0                     |
 | [MVS SDK from HIKROBOT](https://www.hikrobotics.com/cn/machinevision/service/download?module=0) | MVS-2.1.2_x86_64_20221208 |
 
-## Build dependancy
+## Building dependancy
 
-> ***Wrote in `./shell/env_dep_install.sh`***
+> ***Wrote in `./shell/functions.sh`***
 
 ```sh
 # base
@@ -64,8 +63,18 @@ sudo apt-get install libudev-dev
 sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen3-dev libsuitesparse-dev
 ```
 
+## Contributing Dependencies
+
+1. Please apply the recommended workspaces extension to your VSCODE.
+
+2. Please run the following commands.
+
+```shell
+sudo snap install shfmt
+```
+
 ## Version
 
-*0.4.0* : 2023.4.7
+*0.4.1* : 2023.4.7
 
 > Read `Release.txt` for more details.
