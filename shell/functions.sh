@@ -346,10 +346,10 @@ function install() {
     if [ $(dpkg -l | grep mvs | wc -l) != 0 ]; then
       if [ $(dpkg -l | grep mvs | grep 2022-10-24 | wc -l) == 0 ]; then
         echo -e "-- MVS deb should update.\n"
-        MVS_install
+      else
+        echo -e "-- MVS deb is not installed.\n"
       fi
-    else
-      echo -e "-- MVS deb is not installed.\n"
+      MVS_install
     fi
     echo -e "-- MVS deb has already to date.\n"
   fi

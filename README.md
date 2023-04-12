@@ -75,6 +75,6 @@ sudo snap install shfmt
 
 ## Version
 
-*0.4.1* : 2023.4.7
+*0.4.1* : 2023.4.12
 
 > Read `Release.txt` for more details.
