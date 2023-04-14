@@ -11,12 +11,14 @@ ROOT_DIR=$(
   cd "$(dirname "$0")/.."
   pwd
 )
+PREFIX=${ROOT_DIR}/../temp_env
+SOURCE=${PREFIX}/source_code
 PREFIX_DIR=$(
-  cd "${ROOT_DIR}/../temp_env"
+  cd "${PREFIX}"
   pwd
 )
 SOURCE_DIR=$(
-  cd "${PREFIX}/source_code"
+  cd "${SOURCE}"
   pwd
 )
 
@@ -118,7 +120,9 @@ function Ceres_dep() {
 #
 function file_fix() {
   var="$(dpkg -l | grep libeigen3-dev | awk '{print $3}')"
-  sed -i "194c set(CERES_EIGEN_VERSION ${var%-*})" ${ROOT_DIR}/lib/cmake/Ceres/CeresConfig.cmake
+  if [[ ${#var} > 3 ]]; then
+    sed -i "194c set(CERES_EIGEN_VERSION ${var%-*})" ${ROOT_DIR}/lib/cmake/Ceres/CeresConfig.cmake
+  fi
 }
 # -------------------------------------------------------------------------
 
@@ -206,11 +210,11 @@ function source_lib_install() {
 #  last edit time:  2023/4/14
 #
 function source_code_install() {
-  if [[ ! -d ${PREFIX_DIR} ]]; then
-    mkdir -p ${PREFIX_DIR}
+ if [[ ! -d ${PREFIX} ]]; then
+    mkdir -p ${PREFIX}
   fi
-  if [[ ! -d ${SOURCE_DIR} ]]; then
-    mkdir -p ${SOURCE_DIR}
+  if [[ ! -d ${SOURCE} ]]; then
+    mkdir -p ${SOURCE}
   fi
 
   base_dep
