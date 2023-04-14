@@ -3,10 +3,20 @@
 # ----------------------------------------------------------------
 ### Constant Variables
 # ----------------------------------------------------------------
-DET_DIR="/usr/local"
 
+MODE=1 # 0: debug 1: release
+
+DET_DIR="/usr/local"
 ROOT_DIR=$(
   cd "$(dirname "$0")/.."
+  pwd
+)
+PREFIX_DIR=$(
+  cd "${ROOT_DIR}/../temp_env"
+  pwd
+)
+SOURCE_DIR=$(
+  cd "${PREFIX}/source_code"
   pwd
 )
 
@@ -17,19 +27,31 @@ SHARE="/share/"
 CMAKE="/lib/cmake/"
 PKG="/lib/pkgconfig/"
 
-MODE=1 # 0: debug 1: release
+oneTBB_dirs=("/lib/oneTBB/")
+BehaviourTree_dirs=("/bin/behaviortree_cpp_v3/" "/include/behaviortree_cpp_v3/" "/lib/behaviortree_cpp_v3/" "/lib/cmake/behaviortree_cpp_v3/")
+OpenCV_dirs=("/bin/opencv4/" "/include/opencv4/" "/lib/opencv4/" "/lib/cmake/opencv4/" "/share/licenses/opencv4/" "/share/opencv4/")
+libusbp_dirs=("/include/libusbp-1/" "/lib/libusbp-1/" "/lib/pkgconfig/libusbp-1/")
+Ceres_dirs=("/include/ceres/" "/lib/ceres/" "/lib/cmake/Ceres/")
+Spdlog_dirs=("/include/spdlog/" "/lib/spdlog/" "/lib/cmake/spdlog/" "/lib/pkgconfig/spdlog/")
+GoogleTest_dirs=("/include/gmock/" "/include/gtest/" "/lib/gmock/" "/lib/gtest/" "/lib/cmake/GTest/" "/lib/pkgconfig/gtest/")
 
 # ------------------------------------------------------------------------------------------------
-### Package options
-#              notice:  modify code below if package changes
-#
-#     each lib format:  directory
-#                       functions
+### Functions
 # ------------------------------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
+## base
+function base_dep() {
+  echo -e "\n-- APT update && Installing base dependancy\n"
+  if [ "$MODE" == 1 ]; then
+    sudo apt update && sudo apt upgrade -y
+    sudo apt-get install -y gcc g++ cmake git curl wget build-essential ninja-build python-is-python3
+  fi
+}
+# -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
 ## oneTBB
-oneTBB_dirs=("/lib/oneTBB/")
 function oneTBB_dep() {
   echo -e "\n-- Installing [oneTBB] dependancy\n"
   # COMMAND OCCURS IN [RELEASE MODE]
@@ -41,7 +63,6 @@ function oneTBB_dep() {
 
 # -------------------------------------------------------------------------
 ## BehaviourTree.CPP
-BehaviourTree_dirs=("/bin/behaviortree_cpp_v3/" "/include/behaviortree_cpp_v3/" "/lib/behaviortree_cpp_v3/" "/lib/cmake/behaviortree_cpp_v3/")
 function BehaviourTree_dep() {
   echo -e "\n-- Installing [BehaviorTree] dependancy\n"
   # COMMAND OCCURS IN [RELEASE MODE]
@@ -53,19 +74,19 @@ function BehaviourTree_dep() {
 
 # -------------------------------------------------------------------------
 ## OpenCV
-OpenCV_dirs=("/bin/opencv4/" "/include/opencv4/" "/lib/opencv4/" "/lib/cmake/opencv4/" "/share/licenses/opencv4/" "/share/opencv4/")
 function OpenCV_dep() {
   echo -e "\n-- Installing [OpenCV] dependancy\n"
   # COMMAND OCCURS IN [RELEASE MODE]
   if [ "$MODE" == 1 ]; then
     sudo apt-get install -y libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libdc1394-22-dev ffmpeg libavcodec-dev libavformat-dev libswscale-dev libavutil-dev
+    sudo add-apt-repository "deb http://security.ubuntu.com/ubuntu xenial-security main"
+    sudo apt-get install libjasper1 libjasper-dev
   fi
 }
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
 ## libusbp
-libusbp_dirs=("/include/libusbp-1/" "/lib/libusbp-1/" "/lib/pkgconfig/libusbp-1/")
 function libusbp_dep() {
   echo -e "\n-- Installing [libusbp] dependancy\n"
   # COMMAND OCCURS IN [RELEASE MODE]
@@ -77,7 +98,6 @@ function libusbp_dep() {
 
 # -------------------------------------------------------------------------
 ## Ceres Solver
-Ceres_dirs=("/include/ceres/" "/lib/ceres/" "/lib/cmake/Ceres/")
 function Ceres_dep() {
   echo -e "\n-- Installing [Ceres Solver] dependancy\n"
   # COMMAND OCCURS IN [RELEASE MODE]
@@ -97,24 +117,22 @@ function Ceres_dep() {
 #  last edit time:  2023/4/5
 #
 function file_fix() {
-  var="$(dpkg -l | grep eigen | awk '{print $3}')"
+  var="$(dpkg -l | grep libeigen3-dev | awk '{print $3}')"
   sed -i "194c set(CERES_EIGEN_VERSION ${var%-*})" ${ROOT_DIR}/lib/cmake/Ceres/CeresConfig.cmake
 }
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
-## Spdlog
-Spdlog_dirs=("/include/spdlog/" "/lib/spdlog/" "/lib/cmake/spdlog/" "/lib/pkgconfig/spdlog/")
-function Spdlog_dep() {
-  echo -e "\n-- Installing [Spdlog] dependancy\n"
+## Google Test
+function GoogleTest_dep() {
+  echo -e "\n-- Installing [Google Test] dependancy\n"
 }
 # -------------------------------------------------------------------------
 
 # -------------------------------------------------------------------------
-## GTest
-GoogleTest_dirs=("/include/gmock/" "/include/gtest/" "/lib/gmock/" "/lib/gtest/" "/lib/cmake/GTest/" "/lib/pkgconfig/gtest/")
-function GoogleTest_dep() {
-  echo -e "\n-- Installing [Google Test] dependancy\n"
+## Spdlog
+function Spdlog_dep() {
+  echo -e "\n-- Installing [Spdlog] dependancy\n"
 }
 # -------------------------------------------------------------------------
 
@@ -127,11 +145,99 @@ function MVS_install() {
   fi
   echo -e "\n-- Installed MVS\n"
 }
+
+function MVS_check() {
+  if [ $(dpkg -l | grep mvs | wc -l) != 0 ]; then
+    if [ $(dpkg -l | grep mvs | grep 2022-10-24 | wc -l) == 0 ]; then
+      echo -e "-- MVS deb should update.\n"
+      MVS_install
+    fi
+  else
+    echo -e "-- MVS deb is not installed.\n"
+    MVS_install
+  fi
+  echo -e "-- MVS deb has already to date.\n"
+}
 # -------------------------------------------------------------------------
 
-# ------------------------------------------------------------------------------------------------
-### Functions
-# ------------------------------------------------------------------------------------------------
+#   function name:  source_lib_install
+#           param:  $1  - target:  git repository name
+#                   $2  - version: git tsg version
+#                   $3  - command: cmake option command
+#          return:  None
+#
+#            note:  This function is used to encapsulate cmake command.
+#           usage:  source_lib_install spdlog v1.11.0 ""
+#           wrote:  Eric Liu
+#  last edit time:  2023/4/14
+#
+function source_lib_install() {
+  target=$1
+  version=$2
+  command=$3
+  source_dir=${SOURCE_DIR}/${target}
+  build_dir=${source_dir}/build
+
+  cd ${SOURCE_DIR}
+  if [[ ! -d ${source_dir} ]]; then
+    git clone https://gitee.com/c12h22o11/${target}.git
+  fi
+  cd {$source_dir}
+  git checkout ${version}
+  if [[ ! -d ${build_dir} ]]; then
+    mkdir ${build_dir}
+  fi
+  if [[ "$(ls -A $1)" ]]; then
+    rm -rf ${build_dir} && mkdir ${build_dir}
+  fi
+  cd ${build_dir}
+  cmake -DCMAKE_INSTALL_PREFIX=${PREFIX_DIR} ${command} .. && make -j 8
+  sudo make install
+}
+
+#   function name:  source_code_install
+#           param:  None
+#          return:  None
+#
+#            note:  This function is used to build libraries with source code.
+#                   TODO(CV-GROUP): update with case-esac to choose whether lib you wanna build.
+#           usage:  source_code_install
+#           wrote:  Eric Liu
+#  last edit time:  2023/4/14
+#
+function source_code_install() {
+  if [[ ! -d ${PREFIX_DIR} ]]; then
+    mkdir -p ${PREFIX_DIR}
+  fi
+  if [[ ! -d ${SOURCE_DIR} ]]; then
+    mkdir -p ${SOURCE_DIR}
+  fi
+
+  base_dep
+  # GoogleTest_dep
+  BehaviourTree_dep
+  # Spdlog_dep
+  Ceres_dep
+  oneTBB_dep
+  OpenCV_dep
+  MVS_check
+
+  opencv_command="-DCMAKE_BUILD_TYPE=RELEASE -DINSTALL_C_EXAMPLES=ON \
+   -DOPENCV_GENERATE_PKGCONFIG=ON -DWITH_GTK=ON -DWITH_FFMPEG=ON -DWITH_LIBV4L=ON \
+   -DWITH_OPENGL=ON -DWITH_ZLIB=ON -DWITH_GSTREAMER=ON -DWITH_OPENJPEG=OFF \
+   -DBUILD_PNG=ON -DBUILD_JPEG=ON -DBUILD_TIFF=ON -DBUILD_EIGEN=ON -DWITH_VTK=OFF \
+   -DBUILD_EXAMPLES=ON -DBUILD_opencv_python2=OFF -DBUILD_opencv_python3=OFF \
+   -DBUILD_opencv_js_bindings_generator=OFF -DBUILD_opencv_objc_bindings_generator=OFF \
+   -DBUILD_opencv_python_bindings_generator=OFF -DBUILD_opencv_java_bindings_generator=OFF "
+  libusbp_command="-DENABLE_EXAMPLES=ON -DENABLE_TESTS=ON "
+  bt_command="-Dgtest_build_samples=ON -Dgtest_build_tests=ON "
+  source_lib_install googletest 1.10.0 ""
+  source_lib_install BehaviorTree.CPP 3.8.1 $bt_command
+  source_lib_install spdlog v1.11.0 ""
+  source_lib_install ceres-solver 2.1.0 ""
+  source_lib_install libusbp 1.2.0 $libusbp_command
+  source_lib_install opencv 4.5.4 $opencv_command
+}
 
 #   function name:  update_file
 #           param:  $1     The update file
@@ -153,8 +259,10 @@ function update_file() {
       fi
       sudo mv ${DST} ${DST}.old
     fi
+    # sudo rm -rf ${DST}
   fi
 }
+
 #   function name:  link_file
 #           param:  $1     The source file
 #                   $2     The destination file
@@ -242,7 +350,7 @@ function link_lib() {
 #  last edit time:  2023/4/6
 #
 function choose() {
-  echo -e "\n-- Menu $1"
+  echo -e "\n-- Choose $1 to refresh / link."
   case "$1" in
   "Opencv" | "OpenCV" | "opencv" | "opencv4" | "OpenCV4")
     OpenCV_dep
@@ -286,9 +394,10 @@ function choose() {
 #  last edit time:  2023/4/7
 #
 function menu() {
-  OPTION=$(whiptail --title "QDU-RM-CV-ENV installation" --menu "Whether you need ROS(noetic)" 15 60 4 \
-    "1" "Withous ROS" \
-    "2" "With ROS" 3>&1 1>&2 2>&3)
+  OPTION=$(whiptail --title "QDU-RM-CV-ENV installation" --menu "Whether you need ROS(noetic)" 15 80 4 \
+    "1" "Pre-Build )     Withous ROS" \
+    "2" "Pre-Build )     With ROS" \
+    "3" "Build     )     With Source code" 3>&1 1>&2 2>&3)
   exitstatus=$?
 
   if [ $exitstatus = 0 ]; then
@@ -313,11 +422,14 @@ function menu() {
         echo "You chose Cancel."
       fi
 
-    else
+    elif [[ $OPTION == "2" ]]; then
       # TODO(CV-GROUP): To be continue ...
       # Nowadays I think it's hard to be completed and apply.
       # whiptail --title "QDU-RM-CV-ENV installation" --msgbox " Not supported now.\n Choose Ok to exit." 10 60
       echo "Not support yet."
+    # TODO(CV-GROUP): to apply the main function.
+    # else
+    #   source_code_install
     fi
   else
     echo "You chose Cancel."
@@ -335,82 +447,70 @@ function menu() {
 #
 function install() {
   install_packages=$1
-  echo
 
-  # 1. Install MVS
-  if [[ "${install_packages[@]}" =~ "MVS" ]]; then
-    echo -e "\n##############################"
-    echo -e "#  Installing install_packages."
-    echo -e "##############################\n"
-
-    if [ $(dpkg -l | grep mvs | wc -l) != 0 ]; then
-      if [ $(dpkg -l | grep mvs | grep 2022-10-24 | wc -l) == 0 ]; then
-        echo -e "-- MVS deb should update.\n"
-      else
-        echo -e "-- MVS deb is not installed.\n"
-      fi
-      MVS_install
-    fi
-    echo -e "-- MVS deb has already to date.\n"
-  fi
-
-  # 2. Install install_packages
   echo -e "\n##############################"
-  echo -e "#  Linking install_packages."
-  echo -e "##############################"
-  # 2.1 Update APT
-  echo -e "\n-- apt update"
-  if [ "$MODE" == 1 ]; then
-    sudo apt update && sudo apt upgrade -y
-  fi
+  echo -e "#  Installing install_packages."
+  echo -e "##############################\n"
 
-  # 2.2 Install essential apps
-  echo -e "\n-- Installing base dependancy\n"
-  if [ "$MODE" == 1 ]; then
-    sudo apt-get install -y gcc g++ cmake git curl wget build-essential ninja-build python-is-python3
-  fi
-
-  # 2.3 Refreshing directories '/usr/local/lib/pkgconfig' and '/usr/local/lib/cmake'
-  if [[ $(readlink ${DET_DIR}${PKG}) == ${ROOT_DIR}${PKG} ]]; then
-    echo -e "FALSE soft link [$(readlink ${DET_DIR}${PKG})->${ROOT_DIR}${PKG}], so REMOVE it.\n"
-    update_file ${DET_DIR}${PKG}
-  fi
-  if [ ! -d ${DET_DIR}${PKG} ]; then
-    echo -e "DON'T HAVE directory ${DET_DIR}${PKG}, so NEW it.\n"
-    echo -e "RUN: sudo mkdir ${DET_DIR}${PKG}"
-    sudo mkdir ${DET_DIR}${PKG}
-  fi
-  if [[ $(readlink ${DET_DIR}${CMAKE}) == ${ROOT_DIR}${CMAKE} ]]; then
-    echo -e "FALSE soft link [$(readlink ${DET_DIR}${CMAKE})->${ROOT_DIR}${CMAKE}], so REMOVE it.\n"
-    update_file ${DET_DIR}${CMAKE}
-  fi
-  if [ ! -d ${DET_DIR}${CMAKE} ]; then
-    echo -e "DON'T HAVE directory ${DET_DIR}${CMAKE}, so NEW it.\n"
-    echo -e "RUN: sudo mkdir ${DET_DIR}${CMAKE}"
-    sudo mkdir ${DET_DIR}${CMAKE}
-  fi
-
-  # 2.4 Call functions above
-  if [[ "${install_packages[@]}" =~ "All" ]]; then
-    choose oneTBB
-    choose BehaviorTree
-    choose OpenCV
-    choose libusbp
-    choose Ceres
-    choose Spdlog
-    choose GoogleTest
-    file_fix
-  else
-    if [[ "${install_packages[@]}" =~ "Ceres" ]]; then
-      file_fix
+  if [[ ${#install_packages[*]} > 0 && ${install_packages[0]} != "You chose Cancel." ]]; then
+    # 1. Install MVS
+    if [[ "${install_packages[@]}" =~ "MVS" ]]; then
+      MVS_check
     fi
-    for package in ${install_packages[@]}; do
-      choose ${package}
-    done
+
+    # 2. Install install_packages
+    echo -e "\n##############################"
+    echo -e "#  Linking install_packages."
+    echo -e "##############################"
+
+    # 2.1 Update APT and Install essential apps
+    base_dep
+
+    # 2.2 Refreshing directories '/usr/local/lib/pkgconfig' and '/usr/local/lib/cmake'
+    if [[ $(readlink ${DET_DIR}${PKG}) == ${ROOT_DIR}${PKG} ]]; then
+      echo -e "FALSE soft link [$(readlink ${DET_DIR}${PKG})->${ROOT_DIR}${PKG}], so REMOVE it.\n"
+      update_file ${DET_DIR}${PKG}
+    fi
+    if [ ! -d ${DET_DIR}${PKG} ]; then
+      echo -e "DON'T HAVE directory ${DET_DIR}${PKG}, so NEW it.\n"
+      echo -e "RUN: sudo mkdir ${DET_DIR}${PKG}"
+      sudo mkdir ${DET_DIR}${PKG}
+    fi
+    if [[ $(readlink ${DET_DIR}${CMAKE}) == ${ROOT_DIR}${CMAKE} ]]; then
+      echo -e "FALSE soft link [$(readlink ${DET_DIR}${CMAKE})->${ROOT_DIR}${CMAKE}], so REMOVE it.\n"
+      update_file ${DET_DIR}${CMAKE}
+    fi
+    if [ ! -d ${DET_DIR}${CMAKE} ]; then
+      echo -e "DON'T HAVE directory ${DET_DIR}${CMAKE}, so NEW it.\n"
+      echo -e "RUN: sudo mkdir ${DET_DIR}${CMAKE}"
+      sudo mkdir ${DET_DIR}${CMAKE}
+    fi
+
+    # 2.3 Call functions above
+    if [[ "${install_packages[@]}" =~ "All" ]]; then
+      file_fix
+      choose oneTBB
+      choose BehaviorTree
+      choose OpenCV
+      choose libusbp
+      choose Ceres
+      choose Spdlog
+      choose GoogleTest
+    else
+      if [[ "${install_packages[@]}" =~ "Ceres" ]]; then
+        file_fix
+      fi
+      for package in ${install_packages[@]}; do
+        choose ${package}
+      done
+    fi
+
+    # 3. ldconfig
+    sudo ldconfig
+  else
+    echo -e "Neither you chose...\n"
   fi
 
-  # 3. ldconfig
-  sudo ldconfig
   echo -e "\n##############################"
   echo -e "#  All is done."
   echo -e "##############################\n"

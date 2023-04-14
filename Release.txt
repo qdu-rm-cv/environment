@@ -1,4 +1,17 @@
 ###########################################
+# 0.5.0
+###########################################
+
+UPDATE SCRIPTS
+
+Add some new functions.
+Add new scripts.
+Add method for user build libs with source codes.
+
+CORRECT SOME PACKAGE
+
+
+###########################################
 # 0.4.1
 ###########################################
 

@@ -1,4 +1,5 @@
 {
-    "shellformat.flag": "-i 2 -sr",
+    "shellformat.flag": "-d -i 2 -sr",
+    "shellformat.path": "/snap/bin/shfmt",
     "editor.formatOnSave": true
 }

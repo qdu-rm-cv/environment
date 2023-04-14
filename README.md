@@ -2,7 +2,7 @@
 
 ## Description
 
-[QDU-RM-AI](https://github.com/qdu-rm-cv/qdu-rm-ai) Environment in `Ubuntu20.04 LTS`, which is used to `CI/CD`, *without CUDA*.
+[QDU-RM-AI](https://github.com/qdu-rm-cv/qdu-rm-ai) Environment Quick Configuration Tool  in `Ubuntu20.04 LTS`, which is used to `CI/CD`, *without CUDA*.
 
 - Passed:
   - *Mini PC*
@@ -11,19 +11,40 @@
 
 ## How to use
 
-```sh
-git clone https://github.com/qdu-rm-cv/environment.git
-cd environment
-sudo chmod 777 ./shell/*
-./shell/env_dep_install.sh # without ui
-# or
-./shell/env_menu_install.sh # [Recommanded] with ui
+1. Clone the repository.
 
-# if you are a member of qdu-rm(weilai), you should run next command,
-# which is used to install some coding and formatting tools.
+    ```sh
+    git clone https://github.com/qdu-rm-cv/environment.git
+    cd environment
+    sudo chmod 777 ./shell/*
+    ```
 
-# ./shell/code_dep_install.sh
-```
+2. Run the script you want to use below.
+
+   - **[*Recommanded*]** With UI
+
+      ```sh
+      ./shell/env_menu_install.sh
+      ```
+
+   - Without UI
+
+      ```sh
+      ./shell/env_dep_install.sh
+      ```
+
+   - With source code
+
+      ```sh
+      ./shell/env_sources_install.sh
+      ```
+
+3. **[*Optional*]** Coding dependencies install
+    If you are a member of ***qdu-rm(WeiLai)*** , you should run next command, which is used to install some coding and formatting tools.
+
+    ```sh
+    ./shell/code_dep_install.sh
+    ```
 
 ## Packages version
 
@@ -69,12 +90,12 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 2. Please run the following commands.
 
-```shell
-sudo snap install shfmt
-```
+    ```shell
+    sudo snap install shfmt
+    ```
 
 ## Version
 
-*0.4.1* : 2023.4.12
+*0.5.0* : 2023.4.12
 
 > Read `Release.txt` for more details.

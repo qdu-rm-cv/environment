@@ -60,7 +60,7 @@
 /* #undef HAVE_VULKAN */
 
 /* Define to 1 if you have the <inttypes.h> header file. */
-#define HAVE_INTTYPES_H 1
+/* #undef HAVE_INTTYPES_H */
 
 /* Intel Integrated Performance Primitives */
 #define HAVE_IPP
@@ -113,7 +113,7 @@
 #define HAVE_PTHREADS_PF
 
 /* Intel Threading Building Blocks */
-#define HAVE_TBB
+/* #undef HAVE_TBB */
 
 /* Ste||ar Group High Performance ParallelX */
 /* #undef HAVE_HPX */
