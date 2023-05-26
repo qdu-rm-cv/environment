@@ -36,7 +36,7 @@
    - With source code
 
       ```sh
-      ./shell/env_sources_install.sh
+      ./shell/env_source_install.sh
       ```
 
 3. **[*Optional*]** Coding dependencies install
@@ -96,6 +96,6 @@ sudo apt-get install libgoogle-glog-dev libgflags-dev libatlas-base-dev libeigen
 
 ## Version
 
-*0.5.0* : 2023.4.12
+*0.5.1* : 2023.5.26
 
 > Read `Release.txt` for more details.

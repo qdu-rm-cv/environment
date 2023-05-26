@@ -145,5 +145,15 @@ set_target_properties(opencv_video PROPERTIES
 list(APPEND _IMPORT_CHECK_TARGETS opencv_video )
 list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_video "${_IMPORT_PREFIX}/lib/libopencv_video.so.4.5.4" )
 
+# Import target "opencv_gapi" for configuration "RELEASE"
+set_property(TARGET opencv_gapi APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+set_target_properties(opencv_gapi PROPERTIES
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libopencv_gapi.so.4.5.4"
+  IMPORTED_SONAME_RELEASE "libopencv_gapi.so.4.5"
+  )
+
+list(APPEND _IMPORT_CHECK_TARGETS opencv_gapi )
+list(APPEND _IMPORT_CHECK_FILES_FOR_opencv_gapi "${_IMPORT_PREFIX}/lib/libopencv_gapi.so.4.5.4" )
+
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

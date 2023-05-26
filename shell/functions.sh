@@ -12,7 +12,8 @@ ROOT_DIR=$(
   pwd
 )
 PREFIX=${ROOT_DIR}/../temp_env
-SOURCE=${PREFIX}/source_code
+# PREFIX=${DET_DIR}
+SOURCE=${ROOT_DIR}/../temp_env/source_code
 PREFIX_DIR=$(
   cd "${PREFIX}"
   pwd
